@@ -1,39 +1,34 @@
 import pyrebase
 import time
 
-# Use your Firebase details to send data to your database
 config = {
-  "apiKey": "...",
-  "authDomain": "...",
-  "databaseURL": "...",
-  "storageBucket": "..."
+  "apiKey": "HuGYMqFLKv2mUKcPnLoBR1r7KtADEAA5lsrK6aF3",
+  "authDomain": "rpi-powerstatus.firebaseapp.com",
+  "databaseURL": "https://rpi-powerstatus-default-rtdb.europe-west1.firebasedatabase.app/",
+  "storageBucket": "rpi-powerstatus.appspot.com"
 }
 
-# This initializez the database
 firebase = pyrebase.initialize_app(config)
 db = firebase.database()
 
-# Code for debugging
 print("Send Data to Firebase Using Raspberry Pi")
-print("—————————————-")
+print("—————————————---------------------------")
 print()
 
 while True:
     
-    # It saves the current time in your location
     localtime = time.localtime()
-    result = time.strftime("%H:%M:%S", localtime)
+    result1 = time.strftime("%H:%M:%S", localtime)
+    time.sleep(5)
+    localtime = time.localtime()
+    result2 = time.strftime("%H:%M:%S", localtime)
+    print("Previous Time :", result1)
+    print("Current Time :", result2)
 
-    # Code fot debugging
-    print("Current Time :", result)
-
-    # This creates the data package to send it to your database
     data = {
-        "Current Time": result
+        "time1": result1,
+        "time2": result2
     }
 
-    # It pushes the data onto the database
-    db.push(data)
-
-    # It sleeps for 5 seconds
-    time.sleep(5)
+    db.set(data)
+    
