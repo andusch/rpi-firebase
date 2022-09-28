@@ -1,46 +1,49 @@
-# Libraries for the time and firebase
+# The libraries needed for the application
 import pyrebase
 import time
+import Adafruit_DHT as dht
+import RPi.GPIO as GPIO
 
-# This is the config for the connection to your Firebase database
+# Enter your Firebase db details here
 config = {
-  "apiKey": "HuGYMqFLKv2mUKcPnLoBR1r7KtADEAA5lsrK6aF3",
-  "authDomain": "rpi-powerstatus.firebaseapp.com",
-  "databaseURL": "https://rpi-powerstatus-default-rtdb.europe-west1.firebasedatabase.app/",
-  "storageBucket": "rpi-powerstatus.appspot.com"
+  "apiKey": "...",
+  "authDomain": "...",
+  "databaseURL":"...",
+  "storageBucket": "...",
 }
 
-# This initializes the database
+# Sets the pin
+GPIO.setmode(GPIO.BCM)
+DHT11_pin = 23
+
+# Initializing the Firebase database
 firebase = pyrebase.initialize_app(config)
 db = firebase.database()
 
-# This prints on the console that it beggins to transimt data
-print("Sending data to Firebase using the Raspberry PI")
+print("Sening data to Firebase Using Raspberry Pi")
 print("—————————————---------------------------")
 print()
 
-# This program runs forever
 while True:
-  
-    # This creates the previous time result
-    localtime = time.localtime()
-    result1 = time.strftime("%H:%M:%S", localtime)
     
-    # This creates the now current time result
-    time.sleep(5)
-    localtime = time.localtime()
-    result2 = time.strftime("%H:%M:%S", localtime)
+    # This reads the data from the DHT11 sensor
+    humi, temp = dht.read_retry(dht.DHT11, DHT11_pin)
+    humi = '{0:0.1f}' .format(humi)
+    temp = '{0:0.1f}' .format(temp)
     
-    # This prints both times for debugging
-    print("Previous Time :", result1)
-    print("Current Time :", result2)
-
-    # This creates a data package
+    # Creating the data package that will be sent to Firebase
     data = {
-        "time1": result1,
-        "time2": result2
+    'temperature' : temp,
+    'humidity' : humi
     }
     
-    # This sends the data to the database (it will update the previous values from there and won't create a new child)
+    # Printing data to console to debug
+    print("Temperature: " + temp + " °C")
+    print("Humidity: " + humi + " RH")
+
+    # This sends the data to the db
     db.set(data)
+
+    # This will sleep for 5 seconds
+    time.sleep(5)
     
