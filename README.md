@@ -1,4 +1,4 @@
-# Application to send current time from Python to Firebase
+# Application to send temperature and humidity from Python to Firebase
 
 You need to install the pyrebase extension for Python3
 
